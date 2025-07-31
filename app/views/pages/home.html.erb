@@ -1,5 +1,14 @@
-<div class="container">
-<h1>My first Personal Home Page!</h1>
-<p>Everyone checkout Aryans blog. </p>
-<%= link_to "About Me", about_path %>
-</div> 
+<!-- Autorenvorstellung mit Farbverlauf -->
+<section class="mt-5 p-4 rounded text-dark" style="background: linear-gradient(135deg, #f0f0f0, #dbe9ff);">
+  <div class="row align-items-center">
+    <div class="col-md-3 text-center mb-3 mb-md-0">
+      <%= image_tag "aryansaleh.png", class: "rounded-circle img-fluid", alt: "Autor Foto", style: "max-width: 200px;" %>
+    </div>
+    <div class="col-md-9">
+      <h3 class="text-primary" style="font-family: 'Georgia', serif; font-size: 1.9rem;">Über den Autor</h3>
+      <p style="font-size: 1.2rem; color: #000;">
+        Hi! Ich bin Aryan, 18 Jahre alt und wohne in München. Ich teile auf diesem Blog Gedanken, Ideen und spannende Inhalte rund um meine Interessen. Danke, dass du dir meine Seite anschaust – viel Spaß beim Stöbern!
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,3 +1,21 @@
-<h1>Pages#about</h1>
-<p>Find me in app/views/pages/about.html.erb</p>
-<%= link_to "Home", root_path %>
+<div class="about-page container">
+  <h1 class="about-title mb-3" style="font-size: 2.2rem;">Info</h1>
+
+  <p class="about-text lead mb-4" style="font-size: 1.1rem;">
+     Regelmäßig neue Beiträge zu aktuellen Themen, persönlichen Erfahrungen und Tipps.
+  </p>
+
+  <div style="margin-top: 4rem;">
+    <blockquote class="blockquote text-center about-quote" style="font-size: 1.4rem;">
+      <p class="mb-0">„Das Leben beginnt dort, wo deine Komfortzone endet.“</p>
+    </blockquote>
+  </div>
+
+  <div class="text-center mb-4">
+    <%= image_tag "stift.jpg", alt: "Bild zur Info-Seite", class: "img-fluid", style: "max-width: 350px;" %>
+  </div>
+
+  <div style="margin-top: 2rem; text-align: left;">
+    <%= link_to "← Zurück zur Startseite", root_path, class: "btn btn-primary" %>
+  </div>
+</div>

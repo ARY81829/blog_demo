@@ -1,10 +1,38 @@
-<p style="color: green"><%= notice %></p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0 rounded-3 card-show">
 
-<%= render @post %>
+        <% if @post.image.attached? %>
+          <%= image_tag @post.image, class: "card-img-top", style: "height: 300px; object-fit: cover;", alt: @post.title %>
+        <% else %>
+          <%= image_tag "https://via.placeholder.com/600x300", class: "card-img-top", alt: "Platzhalter" %>
+        <% end %>
 
-<div>
-  <%= link_to "Edit this post", edit_post_path(@post) %> |
-  <%= link_to "Back to posts", posts_path %>
+        <div class="card-body p-4">
+          <h1 class="card-title mb-3 text-primary fw-bold"><%= @post.title %></h1>
 
-  <%= button_to "Destroy this post", @post, method: :delete %>
+          <p class="text-muted mb-3">
+            <small>📅 <%= @post.created_at.strftime("%d.%m.%Y") %></small>
+          </p>
+
+          <div class="card-text fs-5 mb-4" style="line-height: 1.8;">
+            <%= simple_format(@post.body) %>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <%= link_to "← Zurück", posts_path, class: "btn btn-outline-secondary" %>
+
+            <% if user_signed_in? && @post.user == current_user %>
+              <div class="d-flex gap-2">
+                <%= link_to "✏ Bearbeiten", edit_post_path(@post), class: "btn btn-warning" %>
+                <%= link_to "🗑 Löschen", @post, method: :delete, data: { confirm: "Bist du sicher?" }, class: "btn btn-danger" %>
+              </div>
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

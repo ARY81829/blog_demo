@@ -1,52 +1,351 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>BlogDemo</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
-  </head>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BlogDemo</title>
 
-  <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-      </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Poppins:wght@600&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" crossorigin="anonymous" />
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  <%= javascript_importmap_tags %>
+
+  <style>
+    /* Ladebalken */
+    #loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0%;
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      transition: width 0.3s ease, opacity 0.5s ease;
+      z-index: 1100;
+    }
+
+    /* Allgemeines Styling */
+    body {
+      font-family: 'Roboto', sans-serif;
+      transition: background-color 0.4s ease, color 0.4s ease, opacity 0.5s ease;
+      opacity: 1;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    body.fade-out {
+      opacity: 0;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background-color: #121212;
+      color: #f8f9fa;
+    }
+    body.dark-mode .navbar {
+      background-color: #1f1f1f !important;
+    }
+    body.dark-mode .navbar-nav .nav-link,
+    body.dark-mode .clock,
+    body.dark-mode .profile-info small {
+      color: #80bdff !important;
+    }
+    body.dark-mode .btn-outline-primary {
+      color: #80bdff;
+      border-color: #80bdff;
+    }
+    body.dark-mode .btn-outline-primary:hover {
+      background-color: #80bdff;
+      color: #000;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #000 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+    }
+    .navbar-nav .nav-link {
+      color: #f8f9fa !important;
+      transition: all 0.3s ease;
+      padding: 0 10px;
+      border-radius: 8px;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #80bdff !important;
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: #0d6efd;
+      border-radius: 30px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background-color: #084298;
+      box-shadow: 0 6px 18px rgba(8, 66, 152, 0.6);
+    }
+    .btn-outline-primary {
+      border-radius: 30px;
+    }
+
+    /* Clock */
+    .clock {
+      font-weight: bold;
+      margin-left: 15px;
+      font-size: 1rem;
+      color: #80bdff;
+    }
+
+    /* Dark/Light Toggle Button */
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #80bdff;
+      cursor: pointer;
+      margin-left: 1rem;
+    }
+
+    /* Carousel Styling */
+    .carousel-inner img {
+      height: 400px;
+      object-fit: cover;
+    }
+
+    /* Newsletter-Anmeldung */
+    .newsletter {
+      background-color: #000; /* Schwarzer Hintergrund */
+      padding: 2rem 1rem;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 2rem auto 4rem auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      color: #e0e0e0; /* heller Text */
+    }
+    .newsletter h3 {
+      margin-bottom: 1rem;
+      font-weight: 700;
+      color: #0d6efd;
+    }
+    .newsletter p {
+      margin-bottom: 1.5rem;
+      color: #ccc;
+    }
+    .newsletter form {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .newsletter input[type="email"] {
+      flex: 1 1 300px;
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      border: 1px solid #ced4da;
+      font-size: 1rem;
+      background-color: #fff; /* Eingabefeld bleibt weiß */
+      color: #000; /* Text im Eingabefeld schwarz */
+      box-shadow: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .newsletter input[type="email"]:focus {
+      outline: none;
+      border-color: #0d6efd;
+      box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+      background-color: #fff;
+      color: #000;
+    }
+    .newsletter button {
+      border-radius: 30px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      background-color: #0d6efd;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      flex-shrink: 0;
+    }
+    .newsletter button:hover {
+      background-color: #084298;
+    }
+
+    /* Flash-Meldung */
+    .flash-notice {
+      max-width: 600px;
+      margin: 1rem auto;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border: 1px solid #badbcc;
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading-bar"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <%= link_to raw('<i class="bi bi-journal-text"></i> MeinBlog'), posts_path, class: "btn btn-primary fw-bold" %>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Navigation umschalten">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><%= link_to raw('<i class="bi bi-house-door-fill"></i> Startseite'), root_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to raw('<i class="bi bi-info-circle-fill"></i> Über'), about_path, class: "nav-link" %></li>
+        </ul>
+
+        <div class="mx-auto" style="max-width: 500px;">
+          <%= form_with url: posts_path, method: :get, local: true, class: "d-flex" do |f| %>
+            <%= f.search_field :search, placeholder: "Suchen", class: "form-control me-2", value: params[:search] %>
+            <%= f.submit "Suche", class: "btn btn-outline-primary" %>
+          <% end %>
+        </div>
+
+        <div class="d-flex align-items-center ms-auto">
+          <div class="clock" id="live-clock">--:--:--</div>
+          <button class="theme-toggle" id="toggle-theme" title="Dark/Light Mode" aria-label="Dark/Light Modus umschalten">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+
+          <% if user_signed_in? %>
+            <div class="d-flex align-items-center ms-3">
+              <%= image_tag "default_profile.png", class: "rounded-circle me-2", size: "40x40", alt: "Profilbild" %>
+              <div class="profile-info d-flex flex-column">
+                <small><%= current_user.email %></small>
+                <%= link_to "Abmelden", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "btn btn-sm btn-outline-danger mt-1" %>
+              </div>
+            </div>
+          <% else %>
+            <div class="ms-3">
+              <%= link_to "Anmelden", new_user_session_path, class: "btn btn-primary me-2" %>
+              <%= link_to "Registrieren", new_user_registration_path, class: "btn btn-secondary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-primary text-white text-center py-5 mb-4">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Salam Aleykum zu meinem Blog!</h1>
+      <p class="lead mb-0">Deine Quelle für spannende Beiträge und Neuigkeiten.</p>
+    </div>
+  </header>
+
+  <!-- Carousel -->
+  <div id="mainCarousel" class="carousel slide mb-5 container" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner rounded shadow overflow-hidden">
+      <div class="carousel-item active">
+        <%= image_tag "modern.png", class: "d-block w-100", alt: "Moderner Arbeitsplatz" %>
+      </div>
+      <div class="carousel-item">
+        <%= image_tag "zukunft.jpg", class: "d-block w-100", alt: "Zukunft" %>
+      </div>
+      <div class="carousel-item">
+        <%= image_tag "zukunft1.jpg", class: "d-block w-100", alt: "Zukunft 2" %>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+      <span class="visually-hidden">Zurück</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+      <span class="visually-hidden">Weiter</span>
+    </button>
   </div>
-</nav>
-  <main>
+
+  <!-- Main Content -->
+  <main class="container mt-4 mb-5" id="page-content" tabindex="-1">
+    <% if flash[:notice] %>
+      <div class="flash-notice"><%= flash[:notice] %></div>
+    <% end %>
+
     <%= yield %>
-  </body>
+  </main>
+
+  <!-- Newsletter-Anmeldung -->
+  <section class="newsletter">
+    <h3>Newsletter abonnieren</h3>
+    <p>Bleibe auf dem Laufenden mit unseren neuesten Beiträgen!</p>
+
+    <%= form_with url: newsletter_subscriptions_path, method: :post, local: true do |f| %>
+      <%= f.email_field :email, placeholder: "Deine E-Mail-Adresse", required: true %>
+      <%= f.submit "Anmelden" %>
+    <% end %>
+  </section>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+  <script>
+    // Uhrzeit aktualisieren
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('live-clock').textContent = now.toLocaleTimeString('de-DE', { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Ladebalken Animation
+    window.addEventListener('load', () => {
+      const bar = document.getElementById('loading-bar');
+      bar.style.width = '100%';
+      setTimeout(() => bar.style.opacity = '0', 500);
+    });
+
+    // Seitenübergang mit Fade-Effekt
+    document.querySelectorAll('a.nav-link, a.btn-primary, a.btn-outline-primary').forEach(link => {
+      link.addEventListener('click', e => {
+        if (
+          !link.href.startsWith(window.location.origin) ||
+          e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === '_blank'
+        ) return;
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => window.location.href = link.href, 500);
+      });
+    });
+
+    // Dark/Light Mode Umschalter
+    const toggleBtn = document.getElementById('toggle-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = localStorage.getItem('theme');
+
+    if (current === 'dark' || (!current && prefersDark)) {
+      document.body.classList.add('dark-mode');
+      toggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      toggleBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+    });
+  </script>
+</body>
 </html>
+
